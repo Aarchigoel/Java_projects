@@ -1,0 +1,172 @@
+import java.util.*;
+import java.io.*;
+
+class Student {
+    int rollNo;
+    String name;
+    double marks;
+
+    // Constructor
+    public Student(int rollNo, String name, double marks) {
+        this.rollNo = rollNo;
+        this.name = name;
+        this.marks = marks;
+    }
+
+    // Display student details
+    public void display() {
+        System.out.println("Roll No: " + rollNo);
+        System.out.println("Name: " + name);
+        System.out.println("Marks: " + marks);
+    }
+}
+
+public class StudentManagementSystem {
+    static ArrayList<Student> studentList = new ArrayList<>();
+    static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        // Load existing student data from file
+        loadData();
+
+        while (true) {
+            System.out.println("\nStudent Management System");
+            System.out.println("1. Add Student");
+            System.out.println("2. Update Student");
+            System.out.println("3. Delete Student");
+            System.out.println("4. Display All Students");
+            System.out.println("5. Search Student by Roll No");
+            System.out.println("6. Exit");
+            System.out.print("Enter choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+
+            switch (choice) {
+                case 1:
+                    addStudent();
+                    break;
+                case 2:
+                    updateStudent();
+                    break;
+                case 3:
+                    deleteStudent();
+                    break;
+                case 4:
+                    displayAllStudents();
+                    break;
+                case 5:
+                    searchStudent();
+                    break;
+                case 6:
+                    saveData();
+                    System.out.println("Exiting...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    // Add a new student
+    private static void addStudent() {
+        System.out.print("Enter Roll No: ");
+        int rollNo = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter Marks: ");
+        double marks = scanner.nextDouble();
+        studentList.add(new Student(rollNo, name, marks));
+        System.out.println("Student added successfully.");
+    }
+
+    // Update student details
+    private static void updateStudent() {
+        System.out.print("Enter Roll No of student to update: ");
+        int rollNo = scanner.nextInt();
+        boolean found = false;
+        for (Student student : studentList) {
+            if (student.rollNo == rollNo) {
+                found = true;
+                System.out.print("Enter new name: ");
+                scanner.nextLine(); // Consume newline
+                student.name = scanner.nextLine();
+                System.out.print("Enter new marks: ");
+                student.marks = scanner.nextDouble();
+                System.out.println("Student details updated successfully.");
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Student not found!");
+        }
+    }
+
+    // Delete student
+    private static void deleteStudent() {
+        System.out.print("Enter Roll No of student to delete: ");
+        int rollNo = scanner.nextInt();
+        boolean found = false;
+        Iterator<Student> iterator = studentList.iterator();
+        while (iterator.hasNext()) {
+            Student student = iterator.next();
+            if (student.rollNo == rollNo) {
+                iterator.remove();
+                found = true;
+                System.out.println("Student deleted successfully.");
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Student not found!");
+        }
+    }
+
+    // Display all students
+    private static void displayAllStudents() {
+        if (studentList.isEmpty()) {
+            System.out.println("No students found.");
+        } else {
+            for (Student student : studentList) {
+                student.display();
+                System.out.println("----------------------------");
+            }
+        }
+    }
+
+    // Search student by Roll No
+    private static void searchStudent() {
+        System.out.print("Enter Roll No of student to search: ");
+        int rollNo = scanner.nextInt();
+        boolean found = false;
+        for (Student student : studentList) {
+            if (student.rollNo == rollNo) {
+                student.display();
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Student not found!");
+        }
+    }
+
+    // Save student data to file
+    private static void saveData() {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("students.dat"))) {
+            out.writeObject(studentList);
+        } catch (IOException e) {
+            System.out.println("Error saving data: " + e.getMessage());
+        }
+    }
+
+    // Load student data from file
+    private static void loadData() {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("students.dat"))) {
+            studentList = (ArrayList<Student>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            // Handle case when the file doesn't exist or is empty
+            System.out.println("No existing student data found.");
+        }
+    }
+}
