@@ -1,0 +1,89 @@
+import java.util.Scanner;
+
+public class TodoList {
+
+    // Array to store tasks
+    private static String[] tasks = new String[10];
+    private static int taskCount = 0;
+
+    // Main method
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\nTo-Do List Application");
+            System.out.println("1. Add a Task");
+            System.out.println("2. View All Tasks");
+            System.out.println("3. Delete a Task");
+            System.out.println("4. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline character
+
+            switch (choice) {
+                case 1:
+                    addTask(scanner);
+                    break;
+                case 2:
+                    viewTasks();
+                    break;
+                case 3:
+                    deleteTask(scanner);
+                    break;
+                case 4:
+                    System.out.println("Exiting the program. Goodbye!");
+                    scanner.close();
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid option, please try again.");
+            }
+        }
+    }
+
+    // Method to add a task
+    public static void addTask(Scanner scanner) {
+        if (taskCount < tasks.length) {
+            System.out.print("Enter the task: ");
+            String task = scanner.nextLine();
+            tasks[taskCount] = task;
+            taskCount++;
+            System.out.println("Task added successfully!");
+        } else {
+            System.out.println("Task list is full! Can't add more tasks.");
+        }
+    }
+
+    // Method to view all tasks
+    public static void viewTasks() {
+        if (taskCount == 0) {
+            System.out.println("No tasks available.");
+        } else {
+            System.out.println("\nTasks in your To-Do List:");
+            for (int i = 0; i < taskCount; i++) {
+                System.out.println((i + 1) + ". " + tasks[i]);
+            }
+        }
+    }
+
+    // Method to delete a task
+    public static void deleteTask(Scanner scanner) {
+        if (taskCount == 0) {
+            System.out.println("No tasks to delete.");
+        } else {
+            System.out.print("Enter the task number to delete: ");
+            int taskNumber = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline character
+
+            if (taskNumber > 0 && taskNumber <= taskCount) {
+                for (int i = taskNumber - 1; i < taskCount - 1; i++) {
+                    tasks[i] = tasks[i + 1]; // Shift tasks to fill the gap
+                }
+                tasks[taskCount - 1] = null; // Clear last task
+                taskCount--;
+                System.out.println("Task deleted successfully!");
+            } else {
+                System.out.println("Invalid task number.");
+            }
+        }
+    }
+}
